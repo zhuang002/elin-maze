@@ -10,10 +10,12 @@ import javax.swing.JButton;
 import java.awt.FlowLayout;
 import javax.swing.SwingConstants;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.awt.event.ActionEvent;
 
 public class MazeUI {
@@ -78,10 +80,17 @@ public class MazeUI {
 		JButton btnDone = new JButton("Done");
 		btnDone.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String dir = System.getProperty("user.dir");
 				String path = textFieldFilePath.getText();
-				maze.loadFile(new File(path));
-				char[][] grid = maze.getGrid();
-				displayGrid(grid);
+				try {
+					
+					maze.loadFile(new File(dir+"\\"+path));
+					char[][] grid = maze.getGrid();
+					displayGrid(grid);
+				} catch(FileNotFoundException ex) {
+					JOptionPane.showMessageDialog(frame, dir+"\\"+path+" not found.");
+					
+				}
 			}
 		});
 		panelNorth.add(btnDone);
@@ -129,23 +138,18 @@ public class MazeUI {
 				label.setBorder(BorderFactory.createLineBorder(Color.black));
 				label.setOpaque(true);
 				label.setHorizontalAlignment(SwingConstants.CENTER);
-				switch (c) {
-				case 'B':
+				if (c==maze.block) {
 					label.setBackground(Color.darkGray);
 					label.setForeground(Color.white);
-					break;
-				case 'O':
+				} else if (c==maze.open) {
 					label.setBackground(Color.yellow);
 					label.setForeground(Color.black);
-					break;
-				case 'S':
+				} else if (c==maze.startChar) {
 					label.setBackground(Color.lightGray);
 					label.setForeground(Color.black);
-					break;
-				case 'X':
+				} else if (c == maze.exitChar) {
 					label.setBackground(Color.green);
 					label.setForeground(Color.black);
-					break;
 				}
 				gridPanel.add(label);
 			}
